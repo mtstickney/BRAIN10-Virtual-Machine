@@ -45,6 +45,7 @@ void print_mem()
 	char *p;
 
 	for (i=0; i<100; i++) {
+		printf("%02d ", i);
 		for (j=0; j<9; j++, i++) {
 			p = get_memp(i);
 			printf("%c%c%c%c ", p[0], p[1], p[2], p[3]);
