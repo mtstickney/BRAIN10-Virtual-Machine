@@ -131,7 +131,7 @@ static int pop(struct proc *p, int addr)
 		fprintf(stderr, "pop: non-numeric stack pointer\n");
 		return -1;
 	}
-	if (addr-1 <= p->stack_base) {
+	if (addr <= p->stack_base) {
 		fprintf(stderr, "pop: pop on empty stack\n");
 		return -1;
 	}
@@ -592,7 +592,7 @@ int tick(struct proc *p)
 		return 0;
 
 	/* load the word at p->ic */
-	memset(temp, 0, 4);
+	memset(temp, '0', 4);
 	memcpy(temp+2, p->ic, 2);
 	ic = word2int(temp);
 	if (ic == -1) {
@@ -605,12 +605,13 @@ int tick(struct proc *p)
 	}
 
 	/* increment p->ic */
-	int2word(ic++, temp);
+	ic++;
+	int2word(ic, temp);
 	memcpy(p->ic, temp+2, 2);
 
 	/* execute the instruction */
 	op = OPCODE(word[0], word[1]);
-	memset(temp, 0, 4);
+	memset(temp, '0', 4);
 	memcpy(temp+2, word+2, 2);
 	addr = word2int(temp);
 
