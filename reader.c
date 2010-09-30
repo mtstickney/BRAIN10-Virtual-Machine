@@ -88,6 +88,15 @@ int main(int argc, char **argv)
 
 	if (load_file() == -1)
 		return 1;
+
+	/* set up the process */
+	memset(&p, '0', sizeof(struct proc));
+	p.c = 'F';
+	p.runnable = 1;
+	p.stack_base = 0;
+
+	print_mem();
+	while (tick(&p) == 0 && p.runnable);
 	print_mem();
 
 	return 0;
