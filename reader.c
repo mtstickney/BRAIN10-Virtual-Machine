@@ -6,34 +6,7 @@
 #include "mem.h"
 #include "vm.h"
 
-int load_file(); 	//Loads brain10 filename into memory
-
 static FILE *fh = NULL;
-
-int main(int argc, char **argv)
-{
-	char *filename;
-	struct proc p;
-
-	if (argc != 2) {
-		printf("Usage: load input.brain\n");
-		return 1;
-	}
-
-	filename = argv[1];
-	fh = fopen(filename, "r");
-
-	if (fh == NULL) {
-		perror("fopen");
-		return 1;
-	}
-
-	if (load_file() == -1)
-		return 1;
-	print_mem();
-
-	return 0;
-}
 
 /* note: buf should be able to hold word_size+1 bytes, since we use scanf to read */
 void read_word(char *buf)
@@ -94,3 +67,27 @@ int load_file()	//Loads brain10 file into memory
 	return 0;
 }
 
+int main(int argc, char **argv)
+{
+	char *filename;
+	struct proc p;
+
+	if (argc != 2) {
+		printf("Usage: load input.brain\n");
+		return 1;
+	}
+
+	filename = argv[1];
+	fh = fopen(filename, "r");
+
+	if (fh == NULL) {
+		perror("fopen");
+		return 1;
+	}
+
+	if (load_file() == -1)
+		return 1;
+	print_mem();
+
+	return 0;
+}
