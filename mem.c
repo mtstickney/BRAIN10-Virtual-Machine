@@ -4,11 +4,15 @@
 
 static char mem[4*100];
 
+void set_mem(char a) {
+	memset(mem, a, 4*100);
+}
+
 static char *get_memp(unsigned int addr) {
 	if (addr > 99) {
 		return NULL;
 	}
-	return mem+4*addr;
+	return &mem[4*addr];
 }
 
 /* Note: load and store convert endianness of words. */

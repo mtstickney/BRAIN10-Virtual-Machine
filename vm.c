@@ -108,7 +108,7 @@ static int push(struct proc *p, int addr)
 {
 	addr = word2int(p->sp);
 	if (addr == -1) {
-		fprintf(stderr, "push: non-numeric stack pointer\n");
+		fprintf(stderr, "push: Non-numeric stack pointer\n");
 		return -1;
 	}
 	addr++;
@@ -129,6 +129,10 @@ static int pop(struct proc *p, int addr)
 	addr = word2int(p->sp);
 	if (addr == -1) {
 		fprintf(stderr, "pop: non-numeric stack pointer\n");
+		return -1;
+	}
+	if (addr > 99) {
+		fprintf(stderr, "pop: Invalid stack pointer\n");
 		return -1;
 	}
 	if (addr <= p->stack_base) {
@@ -222,6 +226,11 @@ static int read(struct proc *p, int addr)
 	}
 	for (i=0; i<10; i++) {
 		read_word(temp);
+		/* FIXME: this fails to read full words that begin with 'END' */
+		if (strncasecmp(temp, "END", 3) == 0) {
+			fprintf(stderr, "read: Out of input data\n");
+			return -1;
+		}
 		if (feof(stdin)) {
 			fprintf(stderr, "read: Unexpected EOF\n");
 			return -1;
@@ -619,5 +628,6 @@ int tick(struct proc *p)
 		if (op_table[i].opcode == op)
 			return op_table[i].run(p, addr);
 	}
+	fprintf(stderr, "tick: Illegal operation %c%c\n", word[0], word[1]);
 	return -1;
 }

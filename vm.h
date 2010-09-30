@@ -16,7 +16,7 @@ enum OP {
 	LH = OPCODE('L', 'H'),
 	SR = OPCODE('S', 'R'),
 	SP = OPCODE('S', 'P'),
-	PS = OPCODE('S', 'P'),
+	PS = OPCODE('P', 'S'),
 	PH = OPCODE('P', 'H'),
 	PP = OPCODE('P', 'P'),
 	CE = OPCODE('C', 'E'),

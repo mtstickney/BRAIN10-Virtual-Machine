@@ -13,7 +13,7 @@ void read_word(char *buf)
 	int c;
 
 	len = 0;
-	if (scanf("%s4", buf) != 1 || (len=strlen(buf)) < 4) {
+	if (scanf("%4s", buf) != 1 || (len=strlen(buf)) < 4) {
 		/* short or failed read */
 		fprintf(stderr, "read_word: short or failed read, trying to recover\n");
 
@@ -32,10 +32,13 @@ int load_file()	//Loads brain10 file into memory
 	char buf[8];
 	int i, c;
 
+	/* clear memory for printing purposes */
+	set_mem('0');
+
 	/* check for header */
 	while (isspace(c=fgetc(stdin)));
 	ungetc(c, stdin);
-	if (scanf("%s7", buf) != 1 || strncasecmp(buf, "BRAIN10", 7) != 0) {
+	if (scanf("%7s", buf) != 1 || strncasecmp(buf, "BRAIN10", 7) != 0) {
 		fprintf(stderr, "warning: missing or incorrect file header, may not be a BRAIN10 program\n");
 	}
 
@@ -62,6 +65,13 @@ int load_file()	//Loads brain10 file into memory
 		/* ignore the rest of the line */
 		while (fgetc(stdin) != '\n');
 	}
+
+	/* consume leftover instructions */
+	do {
+		read_word(buf);
+	} while (strncasecmp(buf, "DATA", 4) != 0);
+	if (feof(stdin)) 
+		fprintf(stderr, "load: unexpected EOF, expect badness.\n");
 	return 0;
 }
 
