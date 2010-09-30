@@ -65,26 +65,9 @@ int load_file()	//Loads brain10 file into memory
 	return 0;
 }
 
-int main(int argc, char **argv)
+int main()
 {
-	char *filename;
-	FILE *fh;
 	struct proc p;
-
-	if (argc != 2) {
-		printf("Usage: load input.brain\n");
-		return 1;
-	}
-
-	filename = argv[1];
-	fh = fopen(filename, "r");
-	if (fh == NULL) {
-		perror("fopen");
-		return 1;
-	}
-
-	/* (portably) redirect input for future reads */
-	stdin = fh;
 
 	if (load_file() == -1)
 		return 1;
