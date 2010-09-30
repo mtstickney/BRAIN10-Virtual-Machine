@@ -2,62 +2,95 @@
 #include <strings.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include "mem.h"
+#include "vm.h"
 
-void loader(char *filename, char *memory); 	//Loads brain10 filename into memory
-void intconvert(char *memory);			//Converts x1x2 characters in memory into ints
+int load_file(); 	//Loads brain10 filename into memory
 
-int main(){
+static FILE *fh = NULL;
 
-	char filename[]="b10.txt";
-	void *memory=calloc(100,4);
-	char *cmemory=memory;
+int main(int argc, char **argv)
+{
+	char *filename;
+	struct proc p;
 
-	loader(filename,memory);
+	if (argc != 2) {
+		printf("Usage: load input.brain\n");
+		return 1;
+	}
 
-	intconvert(memory);
+	filename = argv[1];
+	fh = fopen(filename, "r");
 
-return 0;
+	if (fh == NULL) {
+		perror("fopen");
+		return 1;
+	}
+
+	if (load_file() == -1)
+		return 1;
+	print_mem();
+
+	return 0;
 }
 
-void loader(char *filename, char *memory){	//Loads brain10 filename into memory
+/* note: buf should be able to hold word_size+1 bytes, since we use scanf to read */
+void read_word(char *buf)
+{
+	size_t len;
+	int c;
 
-	char bin[50];			//Input buffer
-	FILE *fp;			//File pointer
-	int i=0;			//Memory input counter
+	len = 0;
+	if (fscanf(fh, "%s4", buf) != 1 || (len=strlen(buf)) < 4) {
+		/* short or failed read */
+		fprintf(stderr, "read_word: short or failed read, trying to recover\n");
 
-	fp=fopen(filename,"r");
-	if (fp==NULL){			//Prints error and exits if file is not found
-		printf("Cannot find file.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	fscanf(fp,"%s",bin);		//Initializes string buffer with first string from file
-
-	if(strcasecmp("BRAIN10",bin)){	//Checks for BRAIN10 header
-		printf("\nIncorrect file header for BRAIN10.\n");
-		exit(EXIT_FAILURE);
-	}
-
-	fscanf(fp,"%s",bin);		//Reads next data string
-
-	while(strcasecmp("DATA",bin)&&!feof(fp)){	//Stores commands up to DATA into memory
-		if(i==400){				//Checks for full memory
-			printf("Memory is full\n");
-			exit(EXIT_FAILURE);
-		}
-		memory[i++]=bin[0];			//Stores first character of string
-		memory[i++]=bin[1];			//Stores second character of string
-		fscanf(fp,"%s",bin);			//Reads next string
+		/* pull the remaining non-whitespace chars */
+		do {
+			c = fgetc(fh);
+			if (!isspace(c))
+				buf[len++] = c;
+		} while (len < 4 && !feof(fh));
 	}
 }
-
-void intconvert(char *memory){		//Converts x1x2 characters in memory into ints
-	int i;
-	for(i=2;i<100;i=i+4){			//Subtracts 30 hex from every 3rd and 4th character
-		memory[i]=memory[i]-0x30;
-		memory[i+1]=memory[i+1]-0x30;
-	}
-}
-
 	
+
+int load_file()	//Loads brain10 file into memory
+{
+	char buf[8];
+	int i, c;
+
+	/* check for header */
+	while (isspace(c=fgetc(fh)));
+	ungetc(c, fh);
+	if (fscanf(fh,"%s7", buf) != 1 || strncasecmp(buf, "BRAIN10", 7) != 0) {
+		fprintf(stderr, "warning: missing or incorrect file header, may not be a BRAIN10 program\n");
+	}
+
+	/* consume whitespace */
+	while (isspace(c=fgetc(fh)));
+	ungetc(c, fh);
+	
+
+	for (i=0; i<100; i++) {
+		read_word(buf);
+		if (feof(fh)) {
+			fprintf(stderr, "load: Unexpected EOF. Attempting to run, expect badness.\n");
+			return 0;
+		}
+
+		if (strncasecmp(buf, "DATA", 4) == 0)
+			return 0;
+		/* now that we have 4 chars, save 'em */
+		if (store(buf, i) == -1) {
+			fprintf(stderr, "load: store failed\n");
+			return -1;
+		}
+
+		/* ignore the rest of the line */
+		while (fgetc(fh) != '\n');
+	}
+	return 0;
+}
 
