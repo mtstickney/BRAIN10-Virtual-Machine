@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include "endian.h"
 #include "mem.h"
 
 static char mem[4*100];
