@@ -209,6 +209,8 @@ static int jmp(struct proc *p, int addr)
 	return 0;
 }
 
+extern void read_word(char *buf);
+
 static int read(struct proc *p, int addr)
 {
 	char temp[5];
@@ -219,12 +221,9 @@ static int read(struct proc *p, int addr)
 		return -1;
 	}
 	for (i=0; i<10; i++) {
-		if (scanf("%s4", temp) != 1) {
-			fprintf(stderr, "read: read from input failed (scanf mismatch)\n");
-			return -1;
-		}
-		if (strlen(temp) != 4) {
-			fprintf(stderr, "read: short read from input\n");
+		read_word(temp);
+		if (feof(stdin)) {
+			fprintf(stderr, "read: Unexpected EOF\n");
 			return -1;
 		}
 		if (store(temp, addr++) == -1) {
