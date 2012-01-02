@@ -23,7 +23,6 @@ static int word2int(char *p)
 static void int2word(unsigned int a, char *p)
 {
 	unsigned int i,limit;
-	char tmp[WORDSZ+1];
 
 	/* construct the highest textual number we can store in a word */
 	/* (all 9s) */
