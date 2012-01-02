@@ -1,6 +1,7 @@
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "vm.h"
 #include "mem.h"
 
@@ -19,12 +20,25 @@ static int word2int(char *p)
 	return i;
 }
 
-void int2word(int a, char *p)
+static void int2word(unsigned int a, char *p)
 {
-	int i;
+	unsigned int i,limit;
+	char tmp[WORDSZ+1];
 
-	for (i=3; i>=0; i--) {
-		p[i] = (a % 10) + '0';
+	/* construct the highest textual number we can store in a word */
+	/* (all 9s) */
+	for (limit=9, i=0; i<WORDSZ-1; i++) {
+		limit *= 10;
+		limit += 9;
+	}
+
+	if (a > limit) {
+		(void)fprintf(stderr, "Integer '%u' too large to store in word\n", a);
+		exit(EXIT_FAILURE);
+	}
+
+	for (i=0; i<WORDSZ; i++, p++) {
+		*p = (a % 10)+'0';
 		a /= 10;
 	}
 }
