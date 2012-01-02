@@ -36,7 +36,8 @@ static void int2word(unsigned int a, char *p)
 		exit(EXIT_FAILURE);
 	}
 
-	for (i=0; i<WORDSZ; i++, p++) {
+	p += WORDSZ-1;
+	for (i=0; i<WORDSZ; i++, p--) {
 		*p = (a % 10)+'0';
 		a /= 10;
 	}
