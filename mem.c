@@ -52,9 +52,9 @@ void print_mem()
 		printf("%02d ", i);
 		for (j=0; j<9; j++, i++) {
 			p = get_memp(i);
-			printf("%.4s ", p);
+			printf("%.*s ", WORDSZ, p);
 		}
 		p=get_memp(i);
-		printf("%.4s\n", p);
+		printf("%.*s\n", WORDSZ, p);
 	}
 }

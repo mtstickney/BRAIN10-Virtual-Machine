@@ -259,7 +259,7 @@ static int print(struct proc *p, int addr)
 			fprintf(stderr, "print: load failed\n");
 			return -1;
 		}
-		printf("%c%c%c%c\n", temp[0], temp[1], temp[2], temp[3]);
+		printf("%.*s\n", WORDSZ, temp);
 	}
 	return 0;
 }
