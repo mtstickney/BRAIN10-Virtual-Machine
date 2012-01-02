@@ -4,6 +4,10 @@
 
 static char mem[WORDSZ*100];
 
+int valid(int addr) {
+	return addr > 0 && addr < 99;
+}
+
 void set_mem(char a) {
 	memset(mem, a, WORDSZ*100);
 }
