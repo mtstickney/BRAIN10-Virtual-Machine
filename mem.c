@@ -2,17 +2,17 @@
 #include <string.h>
 #include "mem.h"
 
-static char mem[4*100];
+static char mem[WORDSZ*100];
 
 void set_mem(char a) {
-	memset(mem, a, 4*100);
+	memset(mem, a, WORDSZ*100);
 }
 
 static char *get_memp(unsigned int addr) {
 	if (addr > 99) {
 		return NULL;
 	}
-	return &mem[4*addr];
+	return &mem[WORDSZ*addr];
 }
 
 /* Note: load and store convert endianness of words. */
@@ -24,7 +24,7 @@ int load(unsigned int addr, char *dest) {
 		fprintf(stderr, "load: invalid address %d\n", addr);
 		return -1;
 	}
-	memcpy(dest, src, 4);
+	memcpy(dest, src, WORDSZ);
 	return 0;
 }
 
@@ -38,7 +38,7 @@ int store(const char *src, unsigned int addr)
 		return -1;
 	}
 
-	memcpy(dest, src, 4);
+	memcpy(dest, src, WORDSZ);
 	return 0;
 }
 
