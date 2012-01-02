@@ -42,6 +42,7 @@ int store(const char *src, unsigned int addr)
 	return 0;
 }
 
+/* Note: assumes word size of 4 for formatting purposes */
 void print_mem()
 {
 	int i,j;
@@ -51,9 +52,9 @@ void print_mem()
 		printf("%02d ", i);
 		for (j=0; j<9; j++, i++) {
 			p = get_memp(i);
-			printf("%c%c%c%c ", p[0], p[1], p[2], p[3]);
+			printf("%.4s ", p);
 		}
 		p=get_memp(i);
-		printf("%c%c%c%c\n", p[0], p[1], p[2], p[3]);
+		printf("%.4s\n", p);
 	}
-}	
+}
