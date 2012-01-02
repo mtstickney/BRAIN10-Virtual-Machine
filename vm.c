@@ -1,11 +1,12 @@
 #include <string.h>
+#include <strings.h>
 #include <stdio.h>
 #include "vm.h"
 #include "mem.h"
 
 #define LEN(a) (sizeof(a)/sizeof((a)[0]))
 
-int word2int(char *p)
+static int word2int(char *p)
 {
 	int i,j;
 
@@ -13,7 +14,7 @@ int word2int(char *p)
 	for (j=0; j<4; j++) {
 		if (p[j] < '0' || p[j] > '9')
 			return -1;
-		i = i*10+p[j]-'0';
+		i = i*10+(p[j]-'0');
 	}
 	return i;
 }
@@ -98,7 +99,7 @@ static int set_sp(struct proc *p, int addr)
 	return 0;
 }
 
-static int get_sp(struct proc *p, int addr)
+static int get_sp(struct proc *p, /*@unused@*/ int addr)
 {
 	memcpy(p->r, p->sp, 4);
 	return 0;
@@ -231,7 +232,7 @@ static int read(struct proc *p, int addr)
 			fprintf(stderr, "read: Out of input data\n");
 			return -1;
 		}
-		if (feof(stdin)) {
+		if (feof(stdin) != 0) {
 			fprintf(stderr, "read: Unexpected EOF\n");
 			return -1;
 		}

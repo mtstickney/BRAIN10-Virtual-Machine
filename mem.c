@@ -17,11 +17,11 @@ static char *get_memp(unsigned int addr) {
 
 /* Note: load and store convert endianness of words. */
 int load(unsigned int addr, char *dest) {
-	void *src;
+	char *src;
 
 	src = get_memp(addr);
 	if (src == NULL) {
-		fprintf(stderr, "load: invalid address %d\n", addr);
+		fprintf(stderr, "load: invalid address %u\n", addr);
 		return -1;
 	}
 	memcpy(dest, src, WORDSZ);
@@ -34,7 +34,7 @@ int store(const char *src, unsigned int addr)
 
 	dest = get_memp(addr);
 	if (dest == NULL) {
-		fprintf(stderr, "store: invalid address %d\n", addr);
+		fprintf(stderr, "store: invalid address %u\n", addr);
 		return -1;
 	}
 
@@ -45,7 +45,7 @@ int store(const char *src, unsigned int addr)
 /* Note: assumes word size of 4 for formatting purposes */
 void print_mem()
 {
-	int i,j;
+	unsigned int i,j;
 	char *p;
 
 	for (i=0; i<100; i++) {

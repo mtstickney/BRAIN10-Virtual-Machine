@@ -8,7 +8,7 @@ struct proc
 	unsigned int stack_base;
 };
 
-#define OPCODE(a, b) (((int)(a)<<8)+(b))
+#define OPCODE(a, b) (((unsigned short)(a)<<8)+(unsigned short)(b))
 
 enum OP {
 	LR = OPCODE('L', 'R'),
@@ -44,4 +44,3 @@ struct op
 };
 
 int tick(struct proc *p);
-	
